@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexMed | Enterprise Diagnostic AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        .navbar { border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .tracking-tight { letter-spacing: -0.5px; }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .step-section { transition: all 0.4s ease-in-out; }
+        .hidden-step { display: none; opacity: 0; transform: translateY(20px); }
+        .active-step { display: block; opacity: 1; transform: translateY(0); }
+        
+        .upload-zone {
+            border: 2px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-zone:hover { border-color: #0ea5e9; background: #f0f9ff; }
+        .form-control, .form-select {
+            border-radius: 10px; padding: 14px; border: 1.5px solid #e2e8f0; background: #f8fafc;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #0ea5e9; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+        }
+        .btn-brand {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white; border: none; border-radius: 10px; padding: 14px; font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-brand:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3); color: white; }
+        
+        .ai-pulse {
+            width: 100%; height: 6px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-top: 15px;
+        }
+        .ai-pulse-bar {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #0ea5e9, #34d399);
+            transition: width 3.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .terminal-output {
+            background: #0f172a; color: #10b981; font-family: 'Courier New', monospace;
+            padding: 24px; border-radius: 12px; font-size: 0.95rem; white-space: pre-wrap;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        @media print {
+            body { background: white !important; }
+            .d-print-none, nav, form { display: none !important; }
+            .glass-card { box-shadow: none !important; border: none !important; padding: 0 !important; }
+            .terminal-output { background: #f8fafc !important; color: #000 !important; border: 1px solid #cbd5e1 !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enterprise Navbar with Custom Logo -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-5 py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#" style="color: #0f172a;">
+                <!-- Django pulls the logo directly from static/img/logo.png -->
+                <img src="{% static 'img/logo.png' %}" alt="NexMed Logo" style="height: 42px; width: auto;" class="me-3">
+                <span class="fs-4 tracking-tight fw-bolder">NexMed <span class="text-primary fw-medium">AI</span></span>
+            </a>
+            <div class="d-none d-md-flex align-items-center">
+                <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill shadow-sm">
+                    <i class="fa-solid fa-network-wired me-2"></i>Secure Diagnostic Tunnel Active
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="glass-card p-4 p-md-5">
+                    
+                    <form method="POST" enctype="multipart/form-data" id="aiForm">
+                        {% csrf_token %}
+
+                        <!-- STEP 1: INITIAL UPLOAD -->
+                        <div id="step1" class="step-section active-step">
+                            <h3 class="fw-bolder mb-2 text-center tracking-tight" style="color: #0f172a;">Upload Patient Scan</h3>
+                            <p class="text-muted text-center mb-5">Select a clinical module and upload the raw telemetry file to begin analysis.</p>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold text-secondary text-uppercase small tracking-tight">1. Select AI Module</label>
+                                <select name="model_type" class="form-select fs-5" required>
+                                    <option value="" selected disabled>Choose clinical domain...</option>
+                                    <option value="pneumonia">Chest X-Ray (Pneumonia)</option>
+                                    <option value="ecg">ECG Multi-Label Analysis</option>
+                                    <option value="kidney">Kidney Stone Ultrasound</option>
+                                    <option value="blood_report">Blood Report OCR</option>
+                                </select>
+                            </div>
+
+                            <label class="form-label fw-bold text-secondary text-uppercase small tracking-tight">2. Upload Patient File</label>
+                            <div class="upload-zone position-relative" onclick="document.getElementById('medical_image').click()">
+                                <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary mb-3"></i>
+                                <h5 class="fw-bold" style="color: #0f172a;">Click to browse or drag file here</h5>
+                                <p class="text-muted small mb-0">Supports JPG, PNG, DICOM</p>
+                                <input type="file" name="medical_image" id="medical_image" class="position-absolute top-0 start-0 opacity-0 w-100 h-100" style="cursor: pointer;" accept="image/*" required onchange="triggerAnalysisIllusion()">
+                            </div>
+                        </div>
+
+                        <!-- STEP 2: DEMOGRAPHICS & FAKE PROCESSING -->
+                        <div id="step2" class="step-section hidden-step">
+                            <div class="alert bg-primary bg-opacity-10 border-0 mb-5 rounded-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fa-solid fa-microchip fa-spin fs-4 text-primary me-3"></i>
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-primary tracking-tight">AI Neural Network Active</h6>
+                                        <small class="text-primary opacity-75 fw-medium" id="aiStatusText">Extracting tensor features from image...</small>
+                                    </div>
+                                </div>
+                                <div class="ai-pulse"><div class="ai-pulse-bar" id="progressBar"></div></div>
+                            </div>
+
+                            <h4 class="fw-bolder mb-1 tracking-tight" style="color: #0f172a;">Patient Demographics</h4>
+                            <p class="text-muted small mb-4">Please verify patient details while the AI completes its spatial analysis.</p>
+
+                            <div class="row g-3 mb-5">
+                                <div class="col-md-12">
+                                    <label class="form-label fw-semibold">Legal Full Name</label>
+                                    <input type="text" name="patient_name" class="form-control" placeholder="Enter patient name" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Patient Age</label>
+                                    <input type="number" name="patient_age" class="form-control" placeholder="Years">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Biological Sex</label>
+                                    <select name="patient_sex" class="form-select">
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                        <option value="O">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-brand w-100 fs-5 shadow-sm" id="submitBtn" disabled>
+                                <i class="fa-solid fa-lock me-2" id="btnIcon"></i><span id="btnText">Processing Scan...</span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- RESULTS OUTPUT -->
+                    {% if result %}
+                    <div class="mt-5" id="resultsSection">
+                        <hr class="mb-5 opacity-10">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bolder mb-0 tracking-tight" style="color: #0f172a;"><i class="fa-solid fa-clipboard-check text-success me-2"></i>Official Diagnosis</h4>
+                            <span class="badge bg-success bg-opacity-10 text-success fs-6 border border-success px-3 py-2">{{ result.diagnosis }}</span>
+                        </div>
+                        
+                        {% if uploaded_file_url %}
+                        <div class="text-center bg-light rounded-4 p-3 mb-4 border border-light-subtle">
+                            <img src="{{ uploaded_file_url }}" style="max-height: 250px;" class="rounded shadow-sm">
+                        </div>
+                        {% endif %}
+
+                        {% if result.details %}
+                        <div class="terminal-output">{{ result.details }}</div>
+                        {% endif %}
+
+                        <button onclick="window.print()" class="btn btn-outline-dark w-100 mt-4 fw-bold p-3 rounded-3 shadow-sm d-print-none">
+                            <i class="fa-solid fa-file-pdf me-2"></i>Download Official Medical Record (PDF)
+                        </button>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function triggerAnalysisIllusion() {
+            const fileInput = document.getElementById('medical_image');
+            const modelSelect = document.querySelector('select[name="model_type"]').value;
+            
+            if (fileInput.files.length > 0) {
+                if (!modelSelect) {
+                    alert("System Error: Please select an AI Module domain first.");
+                    fileInput.value = "";
+                    return;
+                }
+
+                // Hide Step 1, Show Step 2
+                document.getElementById('step1').classList.replace('active-step', 'hidden-step');
+                
+                setTimeout(() => {
+                    document.getElementById('step2').classList.replace('hidden-step', 'active-step');
+                    // Start the progress bar
+                    setTimeout(() => { document.getElementById('progressBar').style.width = '100%'; }, 100);
+                }, 300);
+
+                // Update text dynamically to look like real processing
+                const statusText = document.getElementById('aiStatusText');
+                setTimeout(() => { statusText.innerText = "Applying convolutional filters and matrix weights..."; }, 1200);
+                setTimeout(() => { statusText.innerText = "Cross-referencing pattern anomalies against clinical database..."; }, 2400);
+                
+                // Unlock the submit button when finished
+                setTimeout(() => {
+                    statusText.innerHTML = "<span class='text-success fw-bold'><i class='fa-solid fa-shield-check me-1'></i> Telemetry analyzed. Ready for secure submission.</span>";
+                    const btn = document.getElementById('submitBtn');
+                    btn.removeAttribute('disabled');
+                    document.getElementById('btnIcon').className = "fa-solid fa-file-signature me-2";
+                    document.getElementById('btnText').innerText = "Submit & View Diagnostic Report";
+                }, 3500);
+            }
+        }
+
+        window.onload = function() {
+            if (document.getElementById('resultsSection')) {
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'none';
+                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+    </script>
+</body>
+</html>

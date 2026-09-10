@@ -1,0 +1,13 @@
+/* Shrink the massive logo on the login screen */
+.login-logo img {
+    max-width: 280px !important;
+    height: auto !important;
+    border-radius: 8px; /* Softens the edges if you keep the background */
+    margin-bottom: 20px;
+}
+
+/* Ensure the navbar logo inside the dashboard stays small */
+.brand-image {
+    max-width: 35px !important;
+    height: auto !important;
+}
