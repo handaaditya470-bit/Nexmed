@@ -22,7 +22,14 @@ RUN pip install -r requirements.txt
 
 # Copy the Django project
 COPY . /app/
+# Copy the Django project
+COPY . /app/
 
+# Gather static files (Add this line)
+RUN python manage.py collectstatic --noinput
+
+# Run database migrations
+RUN python manage.py migrate
 # Run database migrations
 RUN python manage.py migrate
 

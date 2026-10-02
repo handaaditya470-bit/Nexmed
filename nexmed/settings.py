@@ -50,6 +50,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Add this exact line
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # ... other middleware stays the same
+]
+
 ROOT_URLCONF = 'nexmed.urls'
 
 TEMPLATES = [

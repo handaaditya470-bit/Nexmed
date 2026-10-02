@@ -7,3 +7,4 @@ requests>=2.31.0
 langgraph==0.1.17
 gunicorn
 django-jazzmin
+whitenoise
