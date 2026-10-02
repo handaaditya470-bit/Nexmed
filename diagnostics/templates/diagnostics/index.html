@@ -62,10 +62,18 @@
         }
         
         .terminal-output {
-            background: #0f172a; color: #10b981; font-family: 'Courier New', monospace;
-            padding: 24px; border-radius: 12px; font-size: 0.95rem; white-space: pre-wrap;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-        }
+    background: #ffffff; 
+    color: #000000; 
+    font-family: 'Courier New', monospace;
+    font-weight: bold; /* This makes the text bold */
+    padding: 24px; 
+    border-radius: 12px; 
+    font-size: 0.95rem; 
+    white-space: pre-wrap;
+    border: 1px solid #cbd5e1;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+        
         @media print {
             body { background: white !important; }
             .d-print-none, nav, form { display: none !important; }
@@ -85,7 +93,7 @@
             </a>
             <div class="d-none d-md-flex align-items-center">
                 <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill shadow-sm">
-                    <i class="fa-solid fa-network-wired me-2"></i>Secure Diagnostic Tunnel Active
+                    Secure Diagnostic Tunnel Active
                 </span>
             </div>
         </div>
@@ -117,9 +125,8 @@
 
                             <label class="form-label fw-bold text-secondary text-uppercase small tracking-tight">2. Upload Patient File</label>
                             <div class="upload-zone position-relative" onclick="document.getElementById('medical_image').click()">
-                                <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary mb-3"></i>
-                                <h5 class="fw-bold" style="color: #0f172a;">Click to browse or drag file here</h5>
-                                <p class="text-muted small mb-0">Supports JPG, PNG, DICOM</p>
+                                <h5 class="fw-bold mt-3" style="color: #0f172a;">Click to browse or drag file here</h5>
+                                <p class="text-muted small mb-3">Supports JPG, PNG, DICOM</p>
                                 <input type="file" name="medical_image" id="medical_image" class="position-absolute top-0 start-0 opacity-0 w-100 h-100" style="cursor: pointer;" accept="image/*" required onchange="triggerAnalysisIllusion()">
                             </div>
                         </div>
@@ -128,6 +135,7 @@
                         <div id="step2" class="step-section hidden-step">
                             <div class="alert bg-primary bg-opacity-10 border-0 mb-5 rounded-3">
                                 <div class="d-flex align-items-center mb-2">
+                                    <!-- Re-added the FontAwesome microchip icon here -->
                                     <i class="fa-solid fa-microchip fa-spin fs-4 text-primary me-3"></i>
                                     <div>
                                         <h6 class="fw-bold mb-0 text-primary tracking-tight">AI Neural Network Active</h6>
@@ -160,7 +168,7 @@
                             </div>
 
                             <button type="submit" class="btn-brand w-100 fs-5 shadow-sm" id="submitBtn" disabled>
-                                <i class="fa-solid fa-lock me-2" id="btnIcon"></i><span id="btnText">Processing Scan...</span>
+                                <span id="btnText">Processing Scan...</span>
                             </button>
                         </div>
                     </form>
@@ -170,7 +178,7 @@
                     <div class="mt-5" id="resultsSection">
                         <hr class="mb-5 opacity-10">
                         <div class="d-flex justify-content-between align-items-center mb-4">
-                            <h4 class="fw-bolder mb-0 tracking-tight" style="color: #0f172a;"><i class="fa-solid fa-clipboard-check text-success me-2"></i>Official Diagnosis</h4>
+                            <h4 class="fw-bolder mb-0 tracking-tight" style="color: #0f172a;">Official Diagnosis</h4>
                             <span class="badge bg-success bg-opacity-10 text-success fs-6 border border-success px-3 py-2">{{ result.diagnosis }}</span>
                         </div>
                         
@@ -185,7 +193,7 @@
                         {% endif %}
 
                         <button onclick="window.print()" class="btn btn-outline-dark w-100 mt-4 fw-bold p-3 rounded-3 shadow-sm d-print-none">
-                            <i class="fa-solid fa-file-pdf me-2"></i>Download Official Medical Record (PDF)
+                            Download Official Medical Record (PDF)
                         </button>
                     </div>
                     {% endif %}
@@ -223,10 +231,9 @@
                 
                 // Unlock the submit button when finished
                 setTimeout(() => {
-                    statusText.innerHTML = "<span class='text-success fw-bold'><i class='fa-solid fa-shield-check me-1'></i> Telemetry analyzed. Ready for secure submission.</span>";
+                    statusText.innerHTML = "<span class='text-success fw-bold'>Telemetry analyzed. Ready for secure submission.</span>";
                     const btn = document.getElementById('submitBtn');
                     btn.removeAttribute('disabled');
-                    document.getElementById('btnIcon').className = "fa-solid fa-file-signature me-2";
                     document.getElementById('btnText').innerText = "Submit & View Diagnostic Report";
                 }, 3500);
             }
@@ -240,5 +247,148 @@
             }
         };
     </script>
+    <!-- NEXMED FLOATING CHATBOT UI -->
+   <style>
+    /* Chatbot Button */
+    #chat-fab {
+        position: fixed; bottom: 30px; right: 30px;
+        width: 60px; height: 60px; border-radius: 50%;
+        background: white; /* Changed to solid white so your logo pops cleanly */
+        border: 2px solid #0ea5e9; /* Added a subtle blue border to match your theme */
+        box-shadow: 0 10px 25px rgba(14, 165, 233, 0.4);
+        cursor: pointer; z-index: 1000; transition: all 0.3s ease;
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden; /* Ensures a square logo doesn't break the circle shape */
+        padding: 8px; /* Adds breathing room around the logo */
+    }
+    #chat-fab:hover { transform: scale(1.1); }
+
+    /* NEW: Forces your logo image to fit perfectly inside the button */
+    #chat-fab img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    /* Chat Window */
+    #chat-window {
+        position: fixed; bottom: 100px; right: 30px;
+        width: 350px; height: 500px; border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.5);
+        display: none; flex-direction: column; z-index: 1000; overflow: hidden;
+    }
+
+    /* Chat Header */
+    .chat-header {
+        background: #0f172a; color: white; padding: 15px 20px;
+        font-weight: 700; display: flex; justify-content: space-between;
+    }
+    
+    /* Chat Body */
+    #chat-body {
+        flex: 1; padding: 15px; overflow-y: auto;
+        display: flex; flex-direction: column; gap: 10px; background: #f8fafc;
+    }
+    .chat-bubble { max-width: 80%; padding: 10px 15px; border-radius: 15px; font-size: 0.9rem; }
+    .bot-bubble { background: #e2e8f0; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px;}
+    .user-bubble { background: #0ea5e9; color: white; align-self: flex-end; border-bottom-right-radius: 2px;}
+
+    /* Chat Input */
+    .chat-input-area {
+        display: flex; padding: 10px; background: white; border-top: 1px solid #e2e8f0;
+    }
+    .chat-input-area input {
+        flex: 1; padding: 10px; border: 1px solid #cbd5e1; border-radius: 10px; outline: none;
+    }
+    .chat-input-area button {
+        background: #0f172a; color: white; border: none; border-radius: 10px;
+        padding: 0 15px; margin-left: 10px; cursor: pointer;
+    }
+</style>
+
+<button id="chat-fab" onclick="toggleChat()">
+    <!-- Pulls the logo.png from your static folder and scales it to fit the circle -->
+    <img src="{% static 'img/logo.png' %}" alt="NexMed Agent" style="width: 34px; height: 34px; object-fit: contain; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));">
+</button>
+
+<div id="chat-window">
+    <div class="chat-header">
+        <span>NexMed AI Assistant</span>
+        <span style="cursor:pointer;" onclick="toggleChat()">✖</span>
+    </div>
+    <div id="chat-body">
+        <div class="chat-bubble bot-bubble">Hello! I am NexMed AI. How can I help clarify your medical results today?</div>
+    </div>
+    <div id="typing-indicator" style="display: none; padding: 10px; color: #007bff; font-style: italic; font-weight: 500; font-size: 0.9em; margin-bottom: 5px;">
+    NexMed AI is analyzing...
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Ask about symptoms or tests..." onkeypress="handleEnter(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    function toggleChat() {
+        const chat = document.getElementById('chat-window');
+        chat.style.display = chat.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function handleEnter(e) {
+        if (e.key === 'Enter') sendMessage();
+    }
+
+    async function sendMessage() {
+        const inputField = document.getElementById('chatInput');
+        const message = inputField.value.trim();
+        if (!message) return;
+        
+        // 1. Clear input field immediately
+        inputField.value = '';
+
+        const chatBody = document.getElementById('chat-body');
+        
+        // 2. Append the User's Message to the chat
+        chatBody.innerHTML += `<div class="chat-bubble user-bubble">${message}</div>`;
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // 3. Show the typing indicator (and scroll to show it)
+        const typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = "block";
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        // 4. Fetch CSRF Token from the form on your page
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // 5. Send request to Django
+        try {
+            const response = await fetch('/chat/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await response.json();
+            
+            // 6. HIDE the typing indicator since the AI is done thinking
+            typingIndicator.style.display = "none";
+            
+            // 7. Append the AI's actual response
+            chatBody.innerHTML += `<div class="chat-bubble bot-bubble">${data.response}</div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+        } catch (error) {
+            console.error("Error:", error);
+            // Hide the indicator if there is an error
+            typingIndicator.style.display = "none";
+            
+            chatBody.innerHTML += `<div class="chat-bubble bot-bubble" style="color: red;">Connection error. Please try again.</div>`;
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+    }
+</script>
 </body>
 </html>

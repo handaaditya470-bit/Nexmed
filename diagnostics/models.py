@@ -1,5 +1,17 @@
 from django.db import models
+from django.db import models
+from django.contrib.auth.models import User
 
+class ChatLog(models.Model):
+    # If users don't log in, you can remove the user field
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    user_message = models.TextField()
+    ai_response = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Log: {self.timestamp.strftime('%Y-%m-%d %H:%M')}"
+    
 class DiagnosticRecord(models.Model):
     patient_name = models.CharField(max_length=150, blank=True, null=True)
     patient_age = models.IntegerField(blank=True, null=True)
