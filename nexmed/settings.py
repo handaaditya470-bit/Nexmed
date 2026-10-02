@@ -122,14 +122,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
 import os
-from pathlib import Path
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-BASE_DIR = Path(__file__).resolve().parent.parent
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Safely include the global static folder only if it exists
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+if os.path.exists(STATIC_DIR):
+    STATICFILES_DIRS = [STATIC_DIR]
+    
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
