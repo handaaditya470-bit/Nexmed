@@ -21,7 +21,13 @@ from .models import DiagnosticRecord, ChatLog
 from .blood_processor import extract_blood_data
 
 # IMPORTANT FOR WINDOWS: Point this to where you installed Tesseract-OCR
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+import sys
+
+# Detect if running on Windows (Local) or Linux (Render)
+if sys.platform.startswith('win'):
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+else:
+    pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
 
 # MATCHING EXACT FILE NAMES
 PNEUMONIA_MODEL_PATH = os.path.join(settings.BASE_DIR, 'models', 'densenet121_chest_xray.keras')
@@ -248,8 +254,8 @@ class AgentState(TypedDict):
     clinical_context: str  # <--- ADD THIS LINE
 # 2. Define Node A: The LLM API Caller
 def generate_medical_response(state: AgentState):
-    api_key = "groq api key"  # Keep your actual Groq key here
-    url = ""
+    api_key = "GROQ_API_KEY"  # Keep your actual Groq key here
+    url = os.environ.get("GROQ_API_URL")
     
     # 1. Keep your existing persona string
     persona = f"""
