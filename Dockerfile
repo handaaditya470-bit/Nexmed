@@ -30,11 +30,10 @@ RUN python manage.py collectstatic --noinput
 
 # Run database migrations
 RUN python manage.py migrate
-# Run database migrations
-RUN python manage.py migrate
 
 # Expose the port Render uses
 EXPOSE 10000
 
 # Start Gunicorn server
-CMD ["gunicorn", "nexmed.wsgi:application", "--bind", "0.0.0.0:10000"]
+# Start Gunicorn server with runtime migrations and a 120-second AI timeout
+CMD sh -c "python manage.py migrate && gunicorn nexmed.wsgi:application --bind 0.0.0.0:10000 --timeout 120"
