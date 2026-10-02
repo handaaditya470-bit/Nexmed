@@ -6,3 +6,4 @@ numpy>=1.24.3
 requests>=2.31.0
 langgraph>=0.0.10
 gunicorn
+django-jazzmin
