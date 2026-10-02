@@ -1,10 +1,10 @@
 Django>=4.2
-tensorflow-cpu==2.17.0
+tensorflow-cpu
 opencv-python-headless>=4.8.0
 pytesseract>=0.3.10
 numpy>=1.24.3
 requests>=2.31.0
-langgraph==0.1.17
+langgraph
 gunicorn
 django-jazzmin
 whitenoise
