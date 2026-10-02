@@ -22,18 +22,12 @@ RUN pip install -r requirements.txt
 
 # Copy the Django project
 COPY . /app/
-# Copy the Django project
-COPY . /app/
 
-# Gather static files (Add this line)
+# Gather static files
 RUN python manage.py collectstatic --noinput
-
-# Run database migrations
-RUN python manage.py migrate
 
 # Expose the port Render uses
 EXPOSE 10000
 
-# Start Gunicorn server
 # Start Gunicorn server with runtime migrations and a 120-second AI timeout
 CMD sh -c "python manage.py migrate && gunicorn nexmed.wsgi:application --bind 0.0.0.0:10000 --timeout 120"
